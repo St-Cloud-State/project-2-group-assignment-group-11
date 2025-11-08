@@ -9,6 +9,8 @@ import java.io.*;
 public class WarehouseContext{
   private static int currentState;
   private static Warehouse warehouse;
+  private int currentUser;
+  private String userID;
   private static WarehouseContext context;
   public static final int IsUser = 1;
   public static final int IsClerk = 2;
@@ -58,39 +60,58 @@ private boolean yesOrNo(String prompt){
     return true;
 }
 
-//Stores user type (clerk/manager/client)
+
 public void setLogin(int code){
-  
-} 
-//Returns user type
-public int getLogin(){
-  
-} 
- //Stores user login ID
+  currentUser = code;
+}
+
 public void setUser(String uID){
-  
+  userID = uID;
 }
+
+public int getLogin(){
+  return currentUser;
+}
+
 public String getUser(){
-  
+  return userID;
 }
+
 //Initiates the change of state based on current and ddesired state
-public void changeState(int transition){
-  
-} 
+ public void changeState(int transition)
+  {
+    //System.out.println("current state " + currentState + " \n \n ");
+    currentState = nextState[currentState][transition];
+    if (currentState == -2) 
+      {System.out.println("Error has occurred"); terminate();}
+    if (currentState == -1) 
+      { //System.out.println("current state " + currentState + " \n \n ");
+      terminate();}
+    states[currentState].run();
+  }
 
 //Exits the program
 private void terminate(){
-  
+  System.exit(0);
 } 
 
 //Runs the state
-public void process(){
-  
-}
+ public static WarehouseContext instance() {
+    if (context == null) {
+       System.out.println("calling constructor");
+      context = new WarehouseContext();
+    }
+    return context;
+  }
 
-//Creates the singleton instance of the class
-public static WarehouseContext instance(){
+  public void process(){
+    states[currentState].run();
+  }
   
-}
+  public static void main (String[] args){
+    WarehouseContext.instance().process(); 
+    states[currentState].run();
+  }
+
 
 }
